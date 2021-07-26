@@ -33,6 +33,8 @@ along with libdnf.  If not, see <https://www.gnu.org/licenses/>.
 #include <utility>
 #include <vector>
 
+#include "redconfig.hpp"
+
 namespace microdnf {
 
 constexpr const char * VERSION = "0.1.0";
@@ -48,6 +50,7 @@ public:
     void load_rpm_repos(libdnf::repo::RepoQuery & repos, libdnf::rpm::PackageSack::LoadRepoFlags flags = libdnf::rpm::PackageSack::LoadRepoFlags::ALL);
 
     libdnf::Base base;
+    redlib::RedNode rednode{*this};
     std::vector<std::pair<std::string, std::string>> setopts;
     std::vector<std::string> enable_plugins_patterns;
     std::vector<std::string> disable_plugins_patterns;

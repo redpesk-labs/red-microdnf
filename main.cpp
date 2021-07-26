@@ -538,7 +538,10 @@ static void set_commandline_args(Context & ctx) {
     installroot->link_value(&config.installroot());
     global_options_group->register_argument(installroot);
 
-    auto releasever = ctx.get_argument_parser().add_new_named_arg("releasever");
+	//iotbzh
+    ctx.rednode.addOptions(microdnf);
+
+    auto releasever = ctx.arg_parser.add_new_named_arg("releasever");
     releasever->set_long_name("releasever");
     releasever->set_has_value(true);
     releasever->set_arg_value_help("RELEASEVER");
@@ -614,6 +617,9 @@ int main(int argc, char * argv[]) try {
 
     // Load main configuration
     base.load_config_from_file();
+
+	//iotbzh: configure rednode
+    context.rednode.configure();
 
     context.set_cache_dir();
 

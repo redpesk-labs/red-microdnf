@@ -71,6 +71,9 @@ void InstallCommand::run() {
     // Creates system repository in the repo_sack and loads it into rpm::PackageSack.
     package_sack.create_system_repo(false);
 
+	//iotbzh: install rednode
+    ctx.rednode.install(package_sack);
+
     // To search in available repositories (available packages)
     libdnf::repo::RepoQuery enabled_repos(ctx.base);
     enabled_repos.filter_enabled(true);
