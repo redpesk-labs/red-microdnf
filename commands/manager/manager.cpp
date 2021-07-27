@@ -120,7 +120,7 @@ void CmdManager::run(Context & ctx) {
     auto & package_sack = *ctx.base.get_rpm_package_sack();
     package_sack.create_system_repo(false);
 
-    fmt::print(fmt::format("SUCCESS: rednode ready at {}", ctx.get_redpath().get_value()));
+    fmt::print("SUCCESS: rednode ready");
 }
 
 }  // namespace microdnf
