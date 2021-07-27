@@ -22,9 +22,9 @@ include_directories(${LIBDNFCLI_INCLUDE_DIRS})
 add_definitions(-DGETTEXT_DOMAIN=\"microdnf\")
 
 # use any sources found under the current directory
-file(GLOB_RECURSE MICRODNF_SOURCES *.cpp)
+file(GLOB_RECURSE MICRODNF_SOURCES commands/*.cpp)
 
-add_executable(redmicrodnf ${MICRODNF_SOURCES})
+add_executable(redmicrodnf main.cpp context.cpp utils.cpp ${MICRODNF_SOURCES})
 
 target_link_libraries(redmicrodnf PUBLIC ${LIBDNF_LIBRARIES} ${LIBDNFCLI_LIBRARIES} stdc++ stdc++fs Threads::Threads ${REDPAK_LIBRARIES} ${LIBFMT_LIBRARIES} ${SMARTCOLS_LIBRARIES})
 install(TARGETS redmicrodnf RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
