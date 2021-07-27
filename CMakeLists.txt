@@ -6,6 +6,12 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBFMT REQUIRED fmt)
 pkg_check_modules(SMARTCOLS REQUIRED smartcols)
 pkg_check_modules(REDPAK REQUIRED red-pak)
+pkg_check_modules(LIBDNF REQUIRED libdnf5)
+pkg_check_modules(LIBDNFCLI REQUIRED libdnf5-cli)
+
+include_directories(${REDPAK_INCLUDE_DIRS})
+include_directories(${LIBDNF_INCLUDE_DIRS})
+include_directories(${LIBDNFCLI_INCLUDE_DIRS})
 
 # set gettext domain for translations
 add_definitions(-DGETTEXT_DOMAIN=\"microdnf\")
@@ -15,6 +21,7 @@ file(GLOB_RECURSE MICRODNF_SOURCES *.cpp)
 
 add_executable(redmicrodnf ${MICRODNF_SOURCES})
 
+target_include_directories(redmocrodnf PUBLIC $
 target_link_libraries(redmicrodnf PUBLIC libdnf5 libdnf5-cli stdc++ stdc++fs Threads::Threads redlib)
 install(TARGETS redmicrodnf RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
