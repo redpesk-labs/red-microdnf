@@ -26,7 +26,7 @@ file(GLOB_RECURSE MICRODNF_SOURCES *.cpp)
 
 add_executable(redmicrodnf ${MICRODNF_SOURCES})
 
-target_link_libraries(redmicrodnf PUBLIC libdnf5 libdnf5-cli stdc++ stdc++fs Threads::Threads ${REDPAK_LIBRARIES} ${LIBFMT_LIBRARIES} ${SMARTCOLS_LIBRARIES})
+target_link_libraries(redmicrodnf PUBLIC ${LIBDNF_LIBRARIES} ${LIBDNFCLI_LIBRARIES} stdc++ stdc++fs Threads::Threads ${REDPAK_LIBRARIES} ${LIBFMT_LIBRARIES} ${SMARTCOLS_LIBRARIES})
 install(TARGETS redmicrodnf RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 
