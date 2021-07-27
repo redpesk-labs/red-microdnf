@@ -4,6 +4,8 @@ project(redmicrodnf CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_definitions(-DPROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
+
 find_package(Threads)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBFMT REQUIRED fmt)
@@ -24,7 +26,7 @@ file(GLOB_RECURSE MICRODNF_SOURCES *.cpp)
 
 add_executable(redmicrodnf ${MICRODNF_SOURCES})
 
-target_link_libraries(redmicrodnf PUBLIC libdnf5 libdnf5-cli stdc++ stdc++fs Threads::Threads redlib)
+target_link_libraries(redmicrodnf PUBLIC libdnf5 libdnf5-cli stdc++ stdc++fs Threads::Threads ${REDPAK_LIBRARIES} ${LIBFMT_LIBRARIES} ${SMARTCOLS_LIBRARIES})
 install(TARGETS redmicrodnf RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 
