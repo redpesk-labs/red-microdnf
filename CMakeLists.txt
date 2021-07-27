@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.18)
 project(redmicrodnf CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(Threads)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBFMT REQUIRED fmt)
