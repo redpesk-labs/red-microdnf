@@ -1,4 +1,5 @@
 find_package(Threads)
+find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBFMT REQUIRED fmt)
 pkg_check_modules(SMARTCOLS REQUIRED smartcols)
 pkg_check_modules(REDPAK REQUIRED red-pak)
