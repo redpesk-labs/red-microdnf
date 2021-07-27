@@ -41,6 +41,7 @@ along with libdnf.  If not, see <https://www.gnu.org/licenses/>.
 #include "commands/swap/swap.hpp"
 #include "commands/upgrade/upgrade.hpp"
 
+#include "commands/manager/manager.hpp"
 #include "context.hpp"
 #include "utils.hpp"
 
@@ -599,6 +600,9 @@ int main(int argc, char * argv[]) try {
         context.get_argument_parser().complete(argc - 2, argv + 2, std::stoi(argv[1] + 11));
         return 0;
     }
+
+	//iotbzh
+    context.commands.push_back(std::make_unique<microdnf::CmdManager>());
 
     // Parse command line arguments
     bool print_help;
