@@ -71,6 +71,9 @@ void ReinstallCommand::run() {
     // Creates system repository in the repo_sack and loads it into rpm::PackageSack.
     package_sack->create_system_repo(false);
 
+    //iotbzh: install rednode
+    ctx.rednode.install(*package_sack);
+
     // To search in available repositories (available packages)
     libdnf::repo::RepoQuery enabled_repos(ctx.base);
     enabled_repos.filter_enabled(true);
@@ -82,6 +85,9 @@ void ReinstallCommand::run() {
         goal.add_rpm_reinstall(option->get_value());
     }
     auto transaction = goal.resolve(true);
+
+    //iotbzh: check transaction pkgs
+    ctx.rednode.checkTransactionPkgs(transaction);
 
     if (transaction.get_problems() != libdnf::GoalProblem::NO_PROBLEM) {
         std::cout << transaction.all_package_solver_problems_to_string() << std::endl;

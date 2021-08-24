@@ -113,7 +113,7 @@ void CmdManager::configure([[maybe_unused]] Context & ctx) {
 
 void CmdManager::run(Context & ctx) {
     if (create.get_value()) {
-        ctx.rednode.createRedNode(alias.get_value(), create.get_value(), update.get_value(), tmplate.get_value());
+        ctx.rednode.createRedNode(alias.get_value(), create.get_value(), update.get_value(), tmplate.get_value(), "admin");
     }
 
     //create system repo

@@ -87,6 +87,10 @@ void InstallCommand::run() {
         goal.add_rpm_install(option->get_value());
     }
     auto transaction = goal.resolve(false);
+
+    //iotbzh: check transaction pkgs
+    ctx.rednode.checkTransactionPkgs(transaction);
+
     if (transaction.get_problems() != libdnf::GoalProblem::NO_PROBLEM) {
         std::cout << transaction.all_package_solver_problems_to_string() << std::endl;
         return;
