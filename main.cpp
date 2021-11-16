@@ -93,6 +93,9 @@ inline RootCommand::RootCommand(libdnf::cli::session::Session & session) : Comma
     register_subcommand(std::make_unique<ReinstallCommand>(*this), software_management_commands_group);
     register_subcommand(std::make_unique<SwapCommand>(*this), software_management_commands_group);
 
+    //iotbzh
+    register_subcommand(std::make_unique<ManagerCommand>(*this), software_management_commands_group);
+
     // query commands
     auto * query_commands_group = session.get_argument_parser().add_new_group("query_commands");
     query_commands_group->set_header("Query Commands:");
@@ -542,7 +545,7 @@ static void set_commandline_args(Context & ctx) {
 	//iotbzh
     ctx.rednode.addOptions(microdnf);
 
-    auto releasever = ctx.arg_parser.add_new_named_arg("releasever");
+    auto releasever = ctx.get_argument_parser().add_new_named_arg("releasever");
     releasever->set_long_name("releasever");
     releasever->set_has_value(true);
     releasever->set_arg_value_help("RELEASEVER");
@@ -600,9 +603,6 @@ int main(int argc, char * argv[]) try {
         context.get_argument_parser().complete(argc - 2, argv + 2, std::stoi(argv[1] + 11));
         return 0;
     }
-
-	//iotbzh
-    context.commands.push_back(std::make_unique<microdnf::CmdManager>());
 
     // Parse command line arguments
     bool print_help;
