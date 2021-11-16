@@ -35,16 +35,6 @@ along with libdnf.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "redconfig.hpp"
 
-//HACK: enum class are still not available in centos
-template <> struct fmt::formatter<libdnf::transaction::TransactionItemAction>: formatter<int> {
-  // parse is inherited from formatter<string_view>.
-  template <typename FormatContext>
-  auto format(libdnf::transaction::TransactionItemAction c, FormatContext& ctx) {
-    return formatter<int>::format(static_cast<int>(c), ctx);
-  }
-};
-
-
 namespace microdnf {
 
 constexpr const char * VERSION = "0.1.0";
@@ -60,7 +50,7 @@ public:
     void load_rpm_repos(libdnf::repo::RepoQuery & repos, libdnf::rpm::PackageSack::LoadRepoFlags flags = libdnf::rpm::PackageSack::LoadRepoFlags::ALL);
 
     libdnf::Base base;
-    redlib::RedNode rednode(base, arg_parser){};
+    redlib::RedNode rednode{get_argument_parser(), base};
     std::vector<std::pair<std::string, std::string>> setopts;
     std::vector<std::string> enable_plugins_patterns;
     std::vector<std::string> disable_plugins_patterns;
