@@ -39,4 +39,4 @@ else()
   message (STATUS "Using fallback bash completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
 endif()
 
-install(FILES bash-completion/microdnf DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR})
+install(FILES bash-completion/redmicrodnf DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR})
