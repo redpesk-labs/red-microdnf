@@ -35,92 +35,94 @@ along with microdnf.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "redconfig.hpp"
 
-namespace microdnf {
+namespace microdnf
+{
 
-using namespace libdnf::cli;
+    using namespace libdnf::cli;
 
-void CmdManager::set_argument_parser(Context & ctx) {
+    ManagerCommand::ManagerCommand(Command &parent) : Command(parent, "manager")
+    {
+    auto & ctx = static_cast<Context &>(get_session());
+    auto & parser = ctx.get_argument_parser();
 
-    auto arg_alias= ctx.arg_parser.add_new_named_arg("alias");
+    auto & cmd = *get_argument_parser_command();
+    cmd.set_short_description("Manager for handle nodes");
+
+    alias = dynamic_cast<libdnf::OptionString *>(
+        parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionString(""))));
+
+    update = dynamic_cast<libdnf::OptionBool *>(
+        parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionBool(false))));
+
+    create = dynamic_cast<libdnf::OptionBool *>(
+        parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionBool(false))));
+
+    tmplate = dynamic_cast<libdnf::OptionString *>(
+        parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionString("default"))));
+
+    auto arg_alias = parser.add_new_named_arg("alias");
     arg_alias->set_has_value(true);
     arg_alias->set_long_name("alias");
     arg_alias->set_short_description("rednode alias name [mandatory when creating");
-    arg_alias->link_value(&alias);
+    arg_alias->link_value(alias);
 
-    auto arg_update = ctx.arg_parser.add_new_named_arg("update");
+    auto arg_update = parser.add_new_named_arg("update");
     arg_update->set_has_value(false);
     arg_update->set_long_name("update");
     arg_update->set_short_description("force creation even when node exist");
     arg_update->set_const_value("true");
-    arg_update->link_value(&update);
+    arg_update->link_value(update);
 
-    auto arg_create = ctx.arg_parser.add_new_named_arg("create");
+    auto arg_create = parser.add_new_named_arg("create");
     arg_create->set_has_value(false);
     arg_create->set_long_name("create");
     arg_create->set_short_description("Create an empty node [require --alias]");
     arg_create->set_const_value("true");
-    arg_create->link_value(&create);
+    arg_create->link_value(create);
 
-    auto arg_tmplate = ctx.arg_parser.add_new_named_arg("template");
+    auto arg_tmplate = parser.add_new_named_arg("template");
     arg_tmplate->set_has_value(true);
     arg_tmplate->set_long_name("template");
     arg_tmplate->set_short_description("Create node config from temmplate [default= /etc/redpak/template.d/default.yaml]");
-    arg_tmplate->link_value(&tmplate);
-
-    auto manager = ctx.arg_parser.add_new_command("manager");
-    manager->set_short_description("Create/Delete redpak rootpath leaves");
-    manager->set_description("");
-    manager->set_named_args_help_header("Optional arguments:");
-    manager->set_positional_args_help_header("Positional arguments:");
-    manager->set_parse_hook_func([this, &ctx](
-                                     [[maybe_unused]] ArgumentParser::Argument * arg,
-                                     [[maybe_unused]] const char * option,
-                                     [[maybe_unused]] int argc,
-                                     [[maybe_unused]] const char * const argv[]) {
-        ctx.select_command(this);
-        return true;
-    });
-
-    manager->register_named_arg(arg_alias);
-    manager->register_named_arg(arg_create);
-    manager->register_named_arg(arg_update);
-    manager->register_named_arg(arg_tmplate);
-
-    ctx.arg_parser.get_root_command()->register_command(manager);
-}
-
-void CmdManager::configure([[maybe_unused]] Context & ctx) {
-    bool nodeconfig = false;
-
-    if (update.get_value()) {
-        create.set(libdnf::Option::Priority::RUNTIME, true);
-    }
-
-    if (create.get_value()) {
-        nodeconfig = true;
-        if (alias.get_value().empty())
-            throw std::runtime_error("--create require --alias=xxxx [no default]");
-
-        if (tmplate.get_value().empty())
-            create.set(libdnf::Option::Priority::RUNTIME, "default");
+    arg_tmplate->link_value(tmplate);
 
     }
 
-    // check we redpath is defined and exist
-    if (ctx.rednode.isRedpath(false))
-        throw std::runtime_error("Syntax Error: redpak --redpath=/xx/../xyz subcommand (missing --redpath)");
-}
+    void ManagerCommand::run()
+    {
+        auto & ctx = static_cast<Context &>(get_session());
 
-void CmdManager::run(Context & ctx) {
-    if (create.get_value()) {
-        ctx.rednode.createRedNode(alias.get_value(), create.get_value(), update.get_value(), tmplate.get_value(), "admin");
+        bool nodeconfig = false;
+
+        if (update.get_value())
+        {
+            create.set(libdnf::Option::Priority::RUNTIME, true);
+        }
+
+        if (create.get_value())
+        {
+            nodeconfig = true;
+            if (alias.get_value().empty())
+                throw std::runtime_error("--create require --alias=xxxx [no default]");
+
+            if (tmplate.get_value().empty())
+                create.set(libdnf::Option::Priority::RUNTIME, "default");
+        }
+
+        // check we redpath is defined and exist
+        if (ctx.rednode.isRedpath(false))
+            throw std::runtime_error("Syntax Error: redpak --redpath=/xx/../xyz subcommand (missing --redpath)");
+
+        if (create.get_value())
+        {
+            ctx.rednode.createRedNode(alias.get_value(), create.get_value(), update.get_value(), tmplate.get_value(), "admin");
+        }
+
+        //create system repo
+        auto &package_sack = *ctx.base.get_rpm_package_sack();
+        package_sack.create_system_repo(false);
+
+        std::cout << "SUCCESS: rednode ready" << std::endl;
     }
 
-    //create system repo
-    auto & package_sack = *ctx.base.get_rpm_package_sack();
-    package_sack.create_system_repo(false);
-
-    fmt::print("SUCCESS: rednode ready");
-}
-
-}  // namespace microdnf
+} // namespace microdnf

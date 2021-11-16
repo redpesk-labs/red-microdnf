@@ -60,7 +60,7 @@ public:
     void load_rpm_repos(libdnf::repo::RepoQuery & repos, libdnf::rpm::PackageSack::LoadRepoFlags flags = libdnf::rpm::PackageSack::LoadRepoFlags::ALL);
 
     libdnf::Base base;
-    redlib::RedNode rednode{*this};
+    redlib::RedNode rednode(base, arg_parser){};
     std::vector<std::pair<std::string, std::string>> setopts;
     std::vector<std::string> enable_plugins_patterns;
     std::vector<std::string> disable_plugins_patterns;

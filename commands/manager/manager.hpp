@@ -20,28 +20,27 @@ along with microdnf.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef MICRODNF_COMMANDS_MANAGER_MANAGER_HPP
 #define MICRODNF_COMMANDS_MANAGER_MANAGER_HPP
 
-#include "../command.hpp"
+#include <libdnf-cli/session.hpp>
 
-#include <libdnf/base/base.hpp>
+#include <libdnf/conf/option_bool.hpp>
 
 #include <memory>
 #include <vector>
 
-namespace microdnf {
+namespace microdnf
+{
+class ManagerCommand : public Command {
+    public:
+        explicit ManagerCommand(Command &parent);
+        void run() override;
 
-class CmdManager : public Command {
-public:
-    void set_argument_parser(Context & ctx) override;
-    void configure(Context & ctx) override;
-    void run(Context & ctx) override;
-
-private:
-    libdnf::OptionString alias{nullptr};
-    libdnf::OptionBool update{false};
-    libdnf::OptionBool create{false};
-    libdnf::OptionString tmplate{"default"};
+    private:
+        libdnf::OptionString * alias{nullptr};
+        libdnf::OptionBool * update{nullptr};
+        libdnf::OptionBool * create{nullptr};
+        libdnf::OptionString * tmplate{nullptr};
 };
 
-}  // namespace microdnf
+} // namespace microdnf
 
 #endif
