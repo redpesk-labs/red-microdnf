@@ -49,7 +49,7 @@ namespace microdnf
     cmd.set_short_description("Manager for handle nodes");
 
     alias = dynamic_cast<libdnf::OptionString *>(
-        parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionString(""))));
+        parser.add_init_value(std::unique_ptr<libdnf::OptionString>(new libdnf::OptionString(""))));
 
     update = dynamic_cast<libdnf::OptionBool *>(
         parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionBool(false))));
@@ -58,7 +58,7 @@ namespace microdnf
         parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionBool(false))));
 
     tmplate = dynamic_cast<libdnf::OptionString *>(
-        parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionString("default"))));
+        parser.add_init_value(std::unique_ptr<libdnf::OptionString>(new libdnf::OptionString("default"))));
 
     auto arg_alias = parser.add_new_named_arg("alias");
     arg_alias->set_has_value(true);
@@ -94,28 +94,28 @@ namespace microdnf
 
         bool nodeconfig = false;
 
-        if (update.get_value())
+        if (update->get_value())
         {
-            create.set(libdnf::Option::Priority::RUNTIME, true);
+            create->set(libdnf::Option::Priority::RUNTIME, true);
         }
 
-        if (create.get_value())
+        if (create->get_value())
         {
             nodeconfig = true;
-            if (alias.get_value().empty())
+            if (alias->get_value().empty())
                 throw std::runtime_error("--create require --alias=xxxx [no default]");
 
-            if (tmplate.get_value().empty())
-                create.set(libdnf::Option::Priority::RUNTIME, "default");
+            if (tmplate->get_value().empty())
+                create->set(libdnf::Option::Priority::RUNTIME, "default");
         }
 
         // check we redpath is defined and exist
         if (ctx.rednode.isRedpath(false))
             throw std::runtime_error("Syntax Error: redpak --redpath=/xx/../xyz subcommand (missing --redpath)");
 
-        if (create.get_value())
+        if (create->get_value())
         {
-            ctx.rednode.createRedNode(alias.get_value(), create.get_value(), update.get_value(), tmplate.get_value(), "admin");
+            ctx.rednode.createRedNode(alias->get_value(), create->get_value(), update->get_value(), tmplate->get_value(), "admin");
         }
 
         //create system repo

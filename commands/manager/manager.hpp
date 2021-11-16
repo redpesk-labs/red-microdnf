@@ -29,7 +29,7 @@ along with microdnf.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace microdnf
 {
-class ManagerCommand : public Command {
+class ManagerCommand : public libdnf::cli::session::Command {
     public:
         explicit ManagerCommand(Command &parent);
         void run() override;
