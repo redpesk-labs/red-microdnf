@@ -103,7 +103,7 @@ void UpgradeCommand::run() {
             goal.add_rpm_upgrade(option->get_value());
         }
     }
-    auto transaction = goal.resolve(false);
+    auto transaction = redlib::RedTransaction(goal.resolve(false));
 
     //iotbzh: check transaction pkgs
     ctx.rednode.checkTransactionPkgs(transaction);

@@ -86,7 +86,7 @@ void InstallCommand::run() {
         auto option = dynamic_cast<libdnf::OptionString *>(pattern.get());
         goal.add_rpm_install(option->get_value());
     }
-    auto transaction = goal.resolve(false);
+    auto transaction = redlib::RedTransaction(goal.resolve(false));
 
     //iotbzh: check transaction pkgs
     ctx.rednode.checkTransactionPkgs(transaction);

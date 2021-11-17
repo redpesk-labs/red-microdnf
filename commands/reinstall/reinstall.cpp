@@ -84,7 +84,7 @@ void ReinstallCommand::run() {
         auto option = dynamic_cast<libdnf::OptionString *>(pattern.get());
         goal.add_rpm_reinstall(option->get_value());
     }
-    auto transaction = goal.resolve(true);
+    auto transaction = redlib::RedTransaction(goal.resolve(false));
 
     //iotbzh: check transaction pkgs
     ctx.rednode.checkTransactionPkgs(transaction);

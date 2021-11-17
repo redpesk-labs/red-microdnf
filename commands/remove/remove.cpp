@@ -86,7 +86,7 @@ void RemoveCommand::run() {
         auto option = dynamic_cast<libdnf::OptionString *>(pattern.get());
         goal.add_rpm_remove(option->get_value());
     }
-    auto transaction = goal.resolve(true);
+    auto transaction = redlib::RedTransaction(goal.resolve(false));
     if (transaction.get_problems() != libdnf::GoalProblem::NO_PROBLEM) {
         std::cout << transaction.all_package_solver_problems_to_string() << std::endl;
         return;

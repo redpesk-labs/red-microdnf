@@ -384,7 +384,7 @@ void Context::load_rpm_repos(libdnf::repo::RepoQuery & repos, libdnf::rpm::Packa
 // }
 
 
-void Context::download_and_run(libdnf::base::Transaction & transaction) {
+void Context::download_and_run(redlib::RedTransaction & transaction) {
     download_packages(transaction, nullptr);
 
     std::cout << std::endl;
@@ -549,7 +549,7 @@ void download_packages(const std::vector<libdnf::rpm::Package> & packages, const
     // TODO(dmach): if a download gets interrupted, the "Total" bar should show reasonable data
 }
 
-void download_packages(libdnf::base::Transaction & transaction, const char * dest_dir) {
+void download_packages(redlib::RedTransaction & transaction, const char * dest_dir) {
     std::vector<libdnf::rpm::Package> downloads;
     for (auto & tspkg : transaction.get_transaction_packages()) {
         if (tspkg.get_action() == libdnf::transaction::TransactionItemAction::INSTALL || \

@@ -34,6 +34,7 @@ along with libdnf.  If not, see <https://www.gnu.org/licenses/>.
 #include <vector>
 
 #include "redconfig.hpp"
+#include "redtransaction.hpp"
 
 namespace microdnf {
 
@@ -69,7 +70,7 @@ public:
 
     /// Downloads transaction packages, creates the history DB transaction and
     /// rpm transaction and runs it.
-    void download_and_run(libdnf::base::Transaction & transaction);
+    void download_and_run(redlib::RedTransaction & transaction);
 
     /// Set to true to suppresses messages notifying about the current state or actions of microdnf.
     void set_quiet(bool quiet) { this->quiet = quiet; }
@@ -111,7 +112,7 @@ bool userconfirm(libdnf::ConfigMain & config);
 
 /// Downoad packages to destdir. If destdir == nullptr, packages are downloaded to the cache.
 void download_packages(const std::vector<libdnf::rpm::Package> & packages, const char * dest_dir);
-void download_packages(libdnf::base::Transaction & transaction, const char * dest_dir);
+void download_packages(redlib::RedTransaction & transaction, const char * dest_dir);
 
 void run_transaction(libdnf::rpm::Transaction & transaction);
 
