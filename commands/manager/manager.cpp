@@ -86,6 +86,10 @@ namespace microdnf
     arg_tmplate->set_short_description("Create node config from temmplate [default= /etc/redpak/template.d/default.yaml]");
     arg_tmplate->link_value(tmplate);
 
+    cmd.register_named_arg(arg_alias);
+    cmd.register_named_arg(arg_update);
+    cmd.register_named_arg(arg_create);
+    cmd.register_named_arg(arg_tmplate);
     }
 
     void ManagerCommand::run()

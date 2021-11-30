@@ -543,7 +543,7 @@ static void set_commandline_args(Context & ctx) {
     global_options_group->register_argument(installroot);
 
 	//iotbzh
-    ctx.rednode.addOptions(microdnf);
+    ctx.rednode.addOptions(global_options_group);
 
     auto releasever = ctx.get_argument_parser().add_new_named_arg("releasever");
     releasever->set_long_name("releasever");
