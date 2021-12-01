@@ -84,7 +84,19 @@ void InstallCommand::run() {
     libdnf::Goal goal(ctx.base);
     for (auto & pattern : *patterns_to_install_options) {
         auto option = dynamic_cast<libdnf::OptionString *>(pattern.get());
-        goal.add_rpm_install(option->get_value());
+
+        auto rpm = option->get_value();
+        if (fs::is_regular_file(rpm)) {
+            auto pkg = package_sack.add_cmdline_package(option->get_value(), false);
+            auto pkg_path = fs::path(pkg.get_package_path());
+            fs::create_directories(pkg_path.parent_path());
+            fs::copy(rpm, pkg_path, fs::copy_options::update_existing);
+
+            goal.add_rpm_install(pkg.get_nevra());
+        }
+        else {
+            goal.add_rpm_install(option->get_value());
+        }
     }
     auto transaction = redlib::RedTransaction(goal.resolve(false));
 
