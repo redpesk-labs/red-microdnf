@@ -29,17 +29,19 @@ along with microdnf.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace microdnf
 {
-class ManagerCommand : public libdnf::cli::session::Command {
+    class ManagerCommand : public libdnf::cli::session::Command
+    {
     public:
         explicit ManagerCommand(Command &parent);
         void run() override;
 
     private:
-        libdnf::OptionString * alias{nullptr};
-        libdnf::OptionBool * update{nullptr};
-        libdnf::OptionBool * create{nullptr};
-        libdnf::OptionString * tmplate{nullptr};
-};
+        libdnf::OptionString *alias{nullptr};
+        libdnf::OptionBool *update{nullptr};
+        libdnf::OptionString *tmplate{nullptr};
+        libdnf::OptionString *tmplateAdmin{nullptr};
+        libdnf::OptionBool *no_system_node{nullptr};
+    };
 
 } // namespace microdnf
 

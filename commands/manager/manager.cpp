@@ -42,91 +42,84 @@ namespace microdnf
 
     ManagerCommand::ManagerCommand(Command &parent) : Command(parent, "manager")
     {
-    auto & ctx = static_cast<Context &>(get_session());
-    auto & parser = ctx.get_argument_parser();
+        auto &ctx = static_cast<Context &>(get_session());
+        auto &parser = ctx.get_argument_parser();
 
-    auto & cmd = *get_argument_parser_command();
-    cmd.set_short_description("Manager for handle nodes");
+        auto &cmd = *get_argument_parser_command();
+        cmd.set_short_description("Manager for handle nodes");
 
-    alias = dynamic_cast<libdnf::OptionString *>(
-        parser.add_init_value(std::unique_ptr<libdnf::OptionString>(new libdnf::OptionString(""))));
+        alias = dynamic_cast<libdnf::OptionString *>(
+            parser.add_init_value(std::unique_ptr<libdnf::OptionString>(new libdnf::OptionString(""))));
 
-    update = dynamic_cast<libdnf::OptionBool *>(
-        parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionBool(false))));
+        no_system_node = dynamic_cast<libdnf::OptionBool *>(
+            parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionBool(false))));
 
-    create = dynamic_cast<libdnf::OptionBool *>(
-        parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionBool(false))));
+        update = dynamic_cast<libdnf::OptionBool *>(
+            parser.add_init_value(std::unique_ptr<libdnf::OptionBool>(new libdnf::OptionBool(false))));
 
-    tmplate = dynamic_cast<libdnf::OptionString *>(
-        parser.add_init_value(std::unique_ptr<libdnf::OptionString>(new libdnf::OptionString("default"))));
+        tmplate = dynamic_cast<libdnf::OptionString *>(
+            parser.add_init_value(std::unique_ptr<libdnf::OptionString>(new libdnf::OptionString(""))));
 
-    auto arg_alias = parser.add_new_named_arg("alias");
-    arg_alias->set_has_value(true);
-    arg_alias->set_long_name("alias");
-    arg_alias->set_short_description("rednode alias name [mandatory when creating");
-    arg_alias->link_value(alias);
+        tmplateAdmin = dynamic_cast<libdnf::OptionString *>(
+            parser.add_init_value(std::unique_ptr<libdnf::OptionString>(new libdnf::OptionString(""))));
 
-    auto arg_update = parser.add_new_named_arg("update");
-    arg_update->set_has_value(false);
-    arg_update->set_long_name("update");
-    arg_update->set_short_description("force creation even when node exist");
-    arg_update->set_const_value("true");
-    arg_update->link_value(update);
+        auto arg_alias = parser.add_new_named_arg("alias");
+        arg_alias->set_has_value(true);
+        arg_alias->set_long_name("alias");
+        arg_alias->set_short_description("rednode alias name default is node dirname");
+        arg_alias->link_value(alias);
+        arg_alias->set_const_value("true");
 
-    auto arg_create = parser.add_new_named_arg("create");
-    arg_create->set_has_value(false);
-    arg_create->set_long_name("create");
-    arg_create->set_short_description("Create an empty node [require --alias]");
-    arg_create->set_const_value("true");
-    arg_create->link_value(create);
+        auto arg_update = parser.add_new_named_arg("update");
+        arg_update->set_has_value(false);
+        arg_update->set_long_name("update");
+        arg_update->set_short_description("force creation even when node exist");
+        arg_update->set_const_value("true");
+        arg_update->link_value(update);
 
-    auto arg_tmplate = parser.add_new_named_arg("template");
-    arg_tmplate->set_has_value(true);
-    arg_tmplate->set_long_name("template");
-    arg_tmplate->set_short_description("Create node config from temmplate [default= /etc/redpak/template.d/default.yaml]");
-    arg_tmplate->link_value(tmplate);
+        auto arg_no_system_node = parser.add_new_named_arg("no-system-node");
+        arg_no_system_node->set_has_value(false);
+        arg_no_system_node->set_long_name("no-system-node");
+        arg_no_system_node->set_short_description("Do not create system node: system configuration will be in first parent");
+        arg_no_system_node->set_const_value("true");
+        arg_no_system_node->link_value(no_system_node);
 
-    cmd.register_named_arg(arg_alias);
-    cmd.register_named_arg(arg_update);
-    cmd.register_named_arg(arg_create);
-    cmd.register_named_arg(arg_tmplate);
+        auto arg_tmplate = parser.add_new_named_arg("template");
+        arg_tmplate->set_has_value(true);
+        arg_tmplate->set_long_name("template");
+        arg_tmplate->set_short_description("Create node config from template [default= /etc/redpak/template.d/default.yaml]");
+        arg_tmplate->link_value(tmplate);
+        arg_tmplate->set_const_value("true");
+
+        auto arg_tmplate_admin = parser.add_new_named_arg("template-admin");
+        arg_tmplate_admin->set_has_value(true);
+        arg_tmplate_admin->set_long_name("template-admin");
+        arg_tmplate_admin->set_short_description("Create node admin config from template [default= /etc/redpak/template.d/admin.yaml]");
+        arg_tmplate_admin->link_value(tmplateAdmin);
+        arg_tmplate_admin->set_const_value("true");
+
+        cmd.register_named_arg(arg_alias);
+        cmd.register_named_arg(arg_update);
+        cmd.register_named_arg(arg_no_system_node);
+        cmd.register_named_arg(arg_tmplate);
+        cmd.register_named_arg(arg_tmplate_admin);
     }
 
     void ManagerCommand::run()
     {
-        auto & ctx = static_cast<Context &>(get_session());
-
-        bool nodeconfig = false;
-
-        if (update->get_value())
-        {
-            create->set(libdnf::Option::Priority::RUNTIME, true);
-        }
-
-        if (create->get_value())
-        {
-            nodeconfig = true;
-            if (alias->get_value().empty())
-                throw std::runtime_error("--create require --alias=xxxx [no default]");
-
-            if (tmplate->get_value().empty())
-                create->set(libdnf::Option::Priority::RUNTIME, "default");
-        }
+        auto &ctx = static_cast<Context &>(get_session());
 
         // check we redpath is defined and exist
         if (ctx.rednode.isRedpath(false))
             throw std::runtime_error("Syntax Error: redpak --redpath=/xx/../xyz subcommand (missing --redpath)");
 
-        if (create->get_value())
-        {
-            ctx.rednode.createRedNode(alias->get_value(), create->get_value(), update->get_value(), tmplate->get_value(), "admin");
-        }
+        ctx.rednode.createRedNode(alias->get_value(), update->get_value(), tmplate->get_value(), tmplateAdmin->get_value(), no_system_node->get_value());
 
-        //create system repo
+        // create system repo
         auto &package_sack = *ctx.base.get_rpm_package_sack();
         package_sack.create_system_repo(false);
 
-        std::cout << "SUCCESS: rednode ready" << std::endl;
+        std::cout << "SUCCESS: rednode " << ctx.rednode.getRedpath() << " ready" << std::endl;
     }
 
 } // namespace microdnf
