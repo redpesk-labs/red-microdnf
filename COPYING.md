@@ -1,6 +1,9 @@
 Copying
 =======
-red-microdnf is a fork of https://github.com/rpm-software-management/libdnf.git.Libdnf is covered under two separate licenses: GPLv2+ and LGPLv2.1+.
+
+red-microdnf is a fork of https://github.com/rpm-software-management/libdnf.git.
+
+Libdnf is covered under two separate licenses: GPLv2+ and LGPLv2.1+.
 
 
 GPLv2+
